@@ -9,6 +9,15 @@ if [[ $TERM == "dumb" ]]; then	# in emacs
     unfunction preexec
 else
 
+
+# alias startxfb = "setenv FRAMEBUFFER /dev/fb\!*; # Set the env var to the cmd arg. con2fb $FRAMEBUFFER /dev/$tty; # Move the fb to the current tty. fbset -fb $FRAMEBUFFER 1920x1200@62; # Favorite from /etc/fb.modes startx -- :\!* -bpp 16 vt0`echo $tty | cut -dy f 2`' # X on this tty. "
+
+dual () {
+    xrandr --output HDMI1 --primary --left-of VGA1 --output VGA1 --auto
+}
+
+#xrandr --output VGA1 --auto --output HDMI1 --auto --left-of VGA1
+
     if [ ! -d $HOME/antigen ]; then
         git clone https://github.com/zsh-users/antigen.git $HOME/antigen
     fi
@@ -25,7 +34,7 @@ git
 git-extras
 git-remote-branch
 pip
-ssh-agent
+ssh-agent id_rsa macbook.key
 
 zsh-users/zsh-syntax-highlighting
 
@@ -39,7 +48,7 @@ EOF
     unsetopt correct_all
 fi
 
-export PATH=$HOME/bin:$PATH
+export PATH=$HOME/bin:/opt/chefdk/embedded/bin/:$PATH
 export EDITOR="emacsclient"
 export ALTERNATE_EDITOR=""
 
@@ -51,4 +60,13 @@ fi
 
 if [ -d ${HOME}/.cabal/bin ]; then
     export PATH="${HOME}/.cabal/bin:$PATH"
+
+if [[ -n "$DISPLAY" ]]; then
+    if [ `qdbus | grep konsole` ]; then
+        xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id `qdbus org.kde.konsole /konsole/MainWindow_1 winId`;
+    fi
+    if [ `qdbus | grep yakuake` ]; then
+        xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -name Yakuake;
+    fi
 fi
+[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh # This loads NVM
