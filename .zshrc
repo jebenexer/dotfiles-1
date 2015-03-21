@@ -16,6 +16,9 @@ dual () {
     xrandr --output HDMI1 --primary --left-of VGA1 --output VGA1 --auto
 }
 
+zstyle :omz:plugins:ssh-agent identities $(grep -rl 'PRIVATE KEY' .ssh | xargs -I {} basename {})
+
+
 #xrandr --output VGA1 --auto --output HDMI1 --auto --left-of VGA1
 
     if [ ! -d $HOME/antigen ]; then
@@ -34,7 +37,6 @@ git
 git-extras
 git-remote-branch
 pip
-ssh-agent id_rsa macbook.key
 
 zsh-users/zsh-syntax-highlighting
 
@@ -46,7 +48,15 @@ EOF
     antigen-apply
 
     unsetopt correct_all
+
+    if [ ! -S "${SSH_AUTH_SOCK}" ]; then;
+        antigen bundle ssh-agent
+    fi
+    
 fi
+
+
+
 
 export PATH=$HOME/bin:/opt/chefdk/embedded/bin/:$PATH
 export EDITOR="emacsclient"
@@ -60,6 +70,7 @@ fi
 
 if [ -d ${HOME}/.cabal/bin ]; then
     export PATH="${HOME}/.cabal/bin:$PATH"
+fi
 
 if [[ -n "$DISPLAY" ]]; then
     if [ `qdbus | grep konsole` ]; then
@@ -69,4 +80,6 @@ if [[ -n "$DISPLAY" ]]; then
         xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -name Yakuake;
     fi
 fi
-[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh # This loads NVM
+
+if [[ -s $HOME/.nvm/nvm.sh ]] then; . $HOME/.nvm/nvm.sh; fi; # This loads NVM
+    
